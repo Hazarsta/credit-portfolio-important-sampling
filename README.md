@@ -19,13 +19,13 @@ $$
 where $\Phi$ is the standard-normal CDF. Its latent asset variable is
 
 $$
-X_i=\sqrt{\rho}\,Z+\sqrt{1-\rho}\,\varepsilon_i,
+X_i=\sqrt{\rho}Z+\sqrt{1-\rho}\varepsilon_i,
 $$
 
 with mutually independent $Z,\varepsilon_1,\ldots,\varepsilon_n\sim N(0,1)$. The shared factor $Z$ represents economy-wide credit conditions and $\varepsilon_i$ is issuer-specific risk. Because
 
 $$
-\operatorname{Var}(X_i)=\rho+(1-\rho)=1,
+\mathrm{Var}(X_i)=\rho+(1-\rho)=1,
 $$
 
 each $X_i$ is standard normal and the threshold construction preserves the input marginal probability:
@@ -34,24 +34,24 @@ $$
 \Pr(X_i<c_i)=\Phi(c_i)=PD_i.
 $$
 
-For two different issuers, $\operatorname{Corr}(X_i,X_j)=\rho$, since their only common random component is $Z$. Conditional on $Z$, defaults are independent; unconditionally, adverse systemic realizations can cause many defaults together.
+For two different issuers, $\mathrm{Corr}(X_i,X_j)=\rho$, since their only common random component is $Z$. Conditional on $Z$, defaults are independent; unconditionally, adverse systemic realizations can cause many defaults together.
 
 Issuer $i$ defaults when $X_i<c_i$. If $a_i$ is its portfolio exposure share, $V$ is total portfolio value, and LGD is the deterministic loss-given-default fraction, one simulated portfolio loss is
 
 $$
-L=\sum_{i=1}^n a_iV\,LGD\,\mathbf 1\{X_i<c_i\}.
+L=\sum_{i=1}^n a_i V\cdot\mathrm{LGD}\cdot\mathbf{1}_{X_i<c_i}.
 $$
 
-The baseline uses $V=\$100$ million, $LGD=40\%$, $\rho=20\%$, 20,000 paths per replication, 50 replications, and seed 42.
+The baseline uses a portfolio value of 100 million USD, deterministic LGD of 40%, asset correlation $\rho=0.20$, 20,000 paths per replication, 50 replications, and seed 42.
 
 ### Risk measures
 
 For a loss random variable $L$, the project estimates expected loss (EL), value at risk (VaR), and expected shortfall (ES). At confidence level $\alpha$,
 
 $$
-EL=\mathbb E[L],\qquad
-VaR_\alpha=\inf\{\ell:F_L(\ell)\geq\alpha\},\qquad
-ES_\alpha=\mathbb E[L\mid L\geq VaR_\alpha].
+EL=\mathbb{E}[L],\qquad
+VaR_\alpha=\inf\lbrace\ell:F_L(\ell)\geq\alpha\rbrace,\qquad
+ES_\alpha=\mathbb{E}[L\mid L\geq VaR_\alpha].
 $$
 
 The reported levels are 95% and 99%. Credit-portfolio losses are discrete because each simulated issuer either defaults or survives, so many paths can have the same loss. Consistent with the implementation, ES uses the inclusive tail $L\geq VaR_\alpha$. This convention can include more than exactly $1-\alpha$ of the observations when there are ties at VaR.
@@ -65,10 +65,10 @@ Plain Monte Carlo draws every scenario from the original model. This is effectiv
 Importance sampling changes the simulation distribution to generate adverse scenarios more often, then corrects those draws with likelihood-ratio weights. For any integrable loss functional $h(L)$, the target expectation under the original density $p$ can be written using a proposal density $q$:
 
 $$
-\theta=\mathbb E_p[h(L)]
-=\int h(L(x))p(x)\,dx
-=\int h(L(x))\frac{p(x)}{q(x)}q(x)\,dx
-=\mathbb E_q[W(x)h(L)],
+\theta=\mathbb{E}_p[h(L)]
+=\int h(L(x))p(x)\mathrm{d}x
+=\int h(L(x))\frac{p(x)}{q(x)}q(x)\mathrm{d}x
+=\mathbb{E}_q[W(x)h(L)],
 $$
 
 where
@@ -141,29 +141,29 @@ This is why one likelihood-ratio weight per simulated path corrects the entire p
 If $(L_j,W_j)$, $j=1,\ldots,N$, are losses and likelihood ratios generated under the proposal, the ordinary importance-sampling estimator of an expectation is
 
 $$
-\widehat\theta_{IS}=\frac{1}{N}\sum_{j=1}^N W_jh(L_j).
+\widehat{\theta}_{IS}=\frac{1}{N}\sum_{j=1}^N W_jh(L_j).
 $$
 
 The implementation uses the self-normalized form
 
 $$
-\widehat\theta_{SNIS}
+\widehat{\theta}_{SNIS}
 =\frac{\sum_{j=1}^N W_jh(L_j)}{\sum_{j=1}^N W_j}.
 $$
 
 For EL, $h(L)=L$. Self-normalization makes the sampled weights sum to one and provides a convenient weighted empirical distribution. It is generally slightly biased at finite $N$, because it is a ratio of random quantities, but it is consistent as $N$ grows and can be more stable when the sampled weights do not sum close to their theoretical mean of one.
 
-Define normalized weights $\widetilde W_j=W_j/\sum_k W_k$. The weighted empirical loss CDF is
+Define normalized weights $\widetilde{W}_j=W_j/\sum_k W_k$. The weighted empirical loss CDF is
 
 $$
-\widehat F_{IS}(\ell)=\sum_{j=1}^N \widetilde W_j\mathbf 1\{L_j\leq\ell\}.
+\widehat{F}_{IS}(\ell)=\sum_{j=1}^N \widetilde{W}_j\mathbf{1}_{L_j\leq\ell}.
 $$
 
 The weighted VaR estimator is the smallest observed loss whose weighted CDF reaches $\alpha$:
 
 $$
 \widehat{VaR}_{\alpha,IS}
-=\inf\{\ell:\widehat F_{IS}(\ell)\geq\alpha\}.
+=\inf\lbrace\ell:\widehat{F}_{IS}(\ell)\geq\alpha\rbrace.
 $$
 
 Given that estimated threshold, the project computes weighted ES using the inclusive tail:
@@ -171,9 +171,9 @@ Given that estimated threshold, the project computes weighted ES using the inclu
 $$
 \widehat{ES}_{\alpha,IS}
 =\frac{\sum_{j=1}^N W_jL_j
-\mathbf 1\{L_j\geq\widehat{VaR}_{\alpha,IS}\}}
+\mathbf{1}_{L_j\geq\widehat{VaR}_{\alpha,IS}}
 {\sum_{j=1}^N W_j
-\mathbf 1\{L_j\geq\widehat{VaR}_{\alpha,IS}\}}.
+\mathbf{1}_{L_j\geq\widehat{VaR}_{\alpha,IS}}.
 $$
 
 ### Weight concentration and effective sample size
