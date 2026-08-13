@@ -171,9 +171,9 @@ Given that estimated threshold, the project computes weighted ES using the inclu
 $$
 \widehat{ES}_{\alpha,IS}
 =\frac{\sum_{j=1}^N W_jL_j
-\mathbf{1}_{L_j\geq\widehat{VaR}_{\alpha,IS}}
+\mathbf{1}_{L_j\geq\widehat{VaR}_{\alpha,IS}}}
 {\sum_{j=1}^N W_j
-\mathbf{1}_{L_j\geq\widehat{VaR}_{\alpha,IS}}.
+\mathbf{1}_{L_j\geq\widehat{VaR}_{\alpha,IS}}}.
 $$
 
 ### Weight concentration and effective sample size
