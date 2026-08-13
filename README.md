@@ -31,15 +31,15 @@ $$
 each $X_i$ is standard normal and the threshold construction preserves the input marginal probability:
 
 $$
-\Pr(X_i<c_i)=\Phi(c_i)=PD_i.
+\Pr(X_i\lt c_i)=\Phi(c_i)=PD_i.
 $$
 
 For two different issuers, $\mathrm{Corr}(X_i,X_j)=\rho$, since their only common random component is $Z$. Conditional on $Z$, defaults are independent; unconditionally, adverse systemic realizations can cause many defaults together.
 
-Issuer $i$ defaults when $X_i<c_i$. If $a_i$ is its portfolio exposure share, $V$ is total portfolio value, and LGD is the deterministic loss-given-default fraction, one simulated portfolio loss is
+Issuer $i$ defaults when $X_i\lt c_i$. If $a_i$ is its portfolio exposure share, $V$ is total portfolio value, and LGD is the deterministic loss-given-default fraction, one simulated portfolio loss is
 
 $$
-L=\sum_{i=1}^n a_i V\cdot\mathrm{LGD}\cdot\mathbf{1}_{X_i<c_i}.
+L=\sum_{i=1}^n a_i V\cdot\mathrm{LGD}\cdot\mathbf{1}_{X_i\lt c_i}.
 $$
 
 The baseline uses a portfolio value of 100 million USD, deterministic LGD of 40%, asset correlation $\rho=0.20$, 20,000 paths per replication, 50 replications, and seed 42.
@@ -77,7 +77,7 @@ $$
 W(x)=\frac{p(x)}{q(x)}
 $$
 
-is the likelihood ratio. Thus sampling more tail observations does not change the target distribution as long as the likelihood ratio is applied correctly and $q(x)>0$ wherever the target integrand matters.
+is the likelihood ratio. Thus sampling more tail observations does not change the target distribution as long as the likelihood ratio is applied correctly and $q(x)\gt 0$ wherever the target integrand matters.
 
 An ideal proposal would devote simulation effort to the scenarios that contribute most to the target while keeping the weighted observations stable. The formally variance-minimizing proposal for a nonnegative expectation is proportional to $h(L(x))p(x)$, but it depends on the unknown quantity being estimated and is generally unavailable. This project therefore uses a simple parametric proposal: a mean shift of the systemic factor.
 
@@ -97,7 +97,7 @@ Z\sim N(\mu_{IS},1),
 \varepsilon_i\sim N(0,1).
 $$
 
-Negative values of $\mu_{IS}$ represent worse systemic conditions. Because default occurs when $X_i<c_i$, shifting $Z$ downward moves many issuers' latent variables toward their default thresholds simultaneously and produces large portfolio losses more frequently. The idiosyncratic factors are not changed.
+Negative values of $\mu_{IS}$ represent worse systemic conditions. Because default occurs when $X_i\lt c_i$, shifting $Z$ downward moves many issuers' latent variables toward their default thresholds simultaneously and produces large portfolio losses more frequently. The idiosyncratic factors are not changed.
 
 ### Derivation of the likelihood-ratio weight
 
